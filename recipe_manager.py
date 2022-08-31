@@ -45,8 +45,15 @@ class NewRecipe:
 class ReadRecipe:
 
     def __init__(self):
-        self.recipe_path = input("\n  Paste the full path of your file: ")
-        self.recipe_data()
+        while True:
+            try:
+                self.recipe_path = input("\n  What is the path to your file? ")
+                self.recipe_data()
+                break
+            except pandas.errors.EmptyDataError:
+                print("        -- Recipe is empty, please try another file. --")
+            except (FileNotFoundError, pandas.errors.ParserError, ValueError):
+                print("        -- Recipe not found, please try again. --")
 
     def recipe_data(self):
         recipe = pandas.read_csv(f"{self.recipe_path}")
