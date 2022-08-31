@@ -1,11 +1,12 @@
 from recipe_manager import NewRecipe, ReadRecipe
 from art import art
 import os
+from prettytable import PrettyTable
 
 
 def clear():
     os.system("cls")
-    # os.system("clear") # change if not running from pc
+    # os.system("clear") # <- change to this if not running from pc
 
 
 def proportion_calculator(base_quantity, user_quantity):
@@ -14,12 +15,28 @@ def proportion_calculator(base_quantity, user_quantity):
 
 
 def recipe_calculator(recipe, proportion, ingredients_list, base_ingredient):
+    output_data = []
     for ingredient in ingredients_list:
         if ingredient != base_ingredient:
             ingredient_row = recipe.recipe_data().loc[recipe.recipe_data()["Ingredient"] == ingredient]
             ingredient_quantity = round(float(ingredient_row["Quantity"]) * proportion, 2)
             ingredient_unit = ingredient_row["Unit"].to_string(index=False).strip()
-            print(f"  {ingredient}: {ingredient_quantity} {ingredient_unit}")
+            output_data.append([ingredient, ingredient_quantity, ingredient_unit])
+    return output_data
+
+
+def prettify_recipe(recipe_name, base_ingredient, final_quantity, base_unit, output_recipe):
+    pretty_recipe = PrettyTable()
+    pretty_recipe.padding_width = 1
+    pretty_recipe.title = f'"{recipe_name}"'
+    pretty_recipe.align = "r"
+    pretty_recipe.field_names = ["Ingredient", "Quantity", "Unit"]
+    pretty_recipe.align["Ingredient"] = "l"
+    pretty_recipe.add_row([base_ingredient, final_quantity, base_unit])
+    for ingredient in output_recipe:
+        pretty_recipe.add_row(ingredient)
+    for row in pretty_recipe.get_string().splitlines():
+        print("  " + row)
 
 
 def main():
@@ -45,7 +62,7 @@ def main():
         else:
             print("        -- Invalid option, please try again. --\n")
 
-    print("\n  From which ingredient do you want to base the proportion on?")
+    print("\n  What is the ingredient that you want to base the proportion on?")
     ingredients = recipe.recipe_data()["Ingredient"].to_list()
     while True:
         base_ingredient = input(f"  {ingredients}: ").capitalize()
@@ -55,7 +72,7 @@ def main():
             base_unit = ingredient_row["Unit"].to_string(index=False).strip()
             break
         else:
-            print("        -- Invalid ingredient, please try again. --")
+            print("        -- Invalid ingredient, please try again. --\n")
 
     while True:
         try:
@@ -65,10 +82,11 @@ def main():
             print("        -- Invalid quantity, please try again. --")
 
     proportion = proportion_calculator(base_quantity, user_quantity)
-    print(f"\n  For {user_quantity} {base_unit} of {base_ingredient},\n  you'll need:")
-    recipe_calculator(recipe, proportion, ingredients, base_ingredient)
+    output_recipe = recipe_calculator(recipe, proportion, ingredients, base_ingredient)
+    print(f"\n  Thank you, here is your newly calculated recipe:")
+    prettify_recipe(recipe.name, base_ingredient, user_quantity, base_unit, output_recipe)
 
-    input("\n  Press enter to exit.")
+    input("\n        -- Press enter to exit. --")
 
 
 main()

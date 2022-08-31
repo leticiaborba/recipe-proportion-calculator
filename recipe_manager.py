@@ -1,5 +1,6 @@
 from ingredients import Ingredient
 import pandas
+import os
 
 
 class NewRecipe:
@@ -54,6 +55,8 @@ class ReadRecipe:
                 print("        -- Recipe is empty, please try another file. --")
             except (FileNotFoundError, pandas.errors.ParserError, ValueError):
                 print("        -- Recipe not found, please try again. --")
+        path = os.path.normpath(self.recipe_path)
+        self.name = os.path.basename(path).split(".")[0].title()
 
     def recipe_data(self):
         recipe = pandas.read_csv(f"{self.recipe_path}")
