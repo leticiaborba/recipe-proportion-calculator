@@ -48,6 +48,6 @@ If you'd like to run it from your computer you need to have these installed:
  ![](running_5_6_7.jpg)
  
  ## Conclusion
- It's still a very simple application without even an interface, but it was fun to compare with where I was two months ago!
+ It's still a very simple application without even a graphic interface, but it was fun to compare with where I was two months ago!
  
  If you have any comments or sugestions feel free to reach me at leticiaborba.b@gmail.com
